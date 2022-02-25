@@ -39,11 +39,7 @@ def calculconso(temps,intensiteh,cosphi):
 
 
 st.title('Wave concept estimation') #titre de l'application web
-primaryColor="purple"
-backgroundColor="#FFFFFF"
-secondaryBackgroundColor="#F0F2F6"
-textColor="purple"
-font="sans serif"
+
 
 #st.sidebar.image(Image.open('logoalstefgroup.jpg'))
 uploaded_file = st.sidebar.file_uploader("Upload le fichier excel", type=["xlsx"]) #Permet d'upload la liste des équipements sous format excel 
@@ -53,14 +49,14 @@ st.sidebar.title('Parametres') #Titre parametres
 genre = st.sidebar.radio("Choix mode d'entrée des paramètres",('Curseur', 'Saisie numérique'))
 
 if genre == 'Curseur': #parametre mode SLIDER
-        high = st.sidebar.slider.primaryColor('flux haut(sur 1h)',0,200,100)
-        thigh = st.sidebar.slider.primaryColor('Temps flux haut par jour (en h)',0,24,5)
-        low = st.sidebar.slider.primaryColor('flux bas (sur 1h)',0,200,50)
-        tlow = st.sidebar.slider.primaryColor('Temps flux bas par jour (en h)',0,24,5)
-        cosphi = st.sidebar.slider.primaryColor('cosphi',0.00,1.00,0.64)
-        prix = st.sidebar.slider.primaryColor('prix du kWh',0.00,0.50,0.12)
-        annee = st.sidebar.slider.primaryColor('Durée investisement',0,24,5)
-        invest = st.sidebar.slider.primaryColor('Investisement (en €)',0,200000,50000)
+        high = st.sidebar.slider('flux haut(sur 1h)',0,200,100)
+        thigh = st.sidebar.slider('Temps flux haut par jour (en h)',0,24,5)
+        low = st.sidebar.slider('flux bas (sur 1h)',0,200,50)
+        tlow = st.sidebar.slider('Temps flux bas par jour (en h)',0,24,5)
+        cosphi = st.sidebar.slider('cosphi',0.00,1.00,0.64)
+        prix = st.sidebar.slider('prix du kWh',0.00,0.50,0.12)
+        annee = st.sidebar.slider('Durée investisement',0,24,5)
+        invest = st.sidebar.slider('Investisement (en €)',0,200000,50000)
         
 else: #parametre mode NUMBER_INPUT : 
 
