@@ -39,7 +39,7 @@ def calculconso(temps,intensiteh,cosphi):
 
 
 st.title('Wave concept estimation') #titre de l'application web
-primaryColor="#F63366"
+primaryColor="purple"
 backgroundColor="#FFFFFF"
 secondaryBackgroundColor="#F0F2F6"
 textColor="purple"
