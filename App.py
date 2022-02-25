@@ -66,8 +66,8 @@ if uploaded_file is not None: #si un fichier est upload
     datafluxhaut = data.assign(fluxh=high) #nouvelle table datafluxhaut, ajout de la colonne flux haut (d'après les parametres choisis)
     datafluxbas = data.assign(fluxh=low) #nouvelle table datafluxbas, ajout de la colonne flux bas (d'après les parametres choisis)
     
-    model = load_model('C:/Users/avalentin/Desktop/ML-Waveconcept/model/model0802v2') # chargement du model1 de machine learning, détermine la consommation des convoyeurs selon leurs caractéristiques 
-    model2 = load_model('C:/Users/avalentin/Desktop/ML-Waveconcept/model/modelfluxecov2')# chargement du model2 de machine learning, détermine le % d'économie en fonction du flux et des caractéristique des convoyeurs
+    model = load_model('model0802v2') # chargement du model1 de machine learning, détermine la consommation des convoyeurs selon leurs caractéristiques 
+    model2 = load_model('modelfluxecov2')# chargement du model2 de machine learning, détermine le % d'économie en fonction du flux et des caractéristique des convoyeurs
 
     pred = model.predict(data) #utilisation du model1 pour l'économie en flux haut
     economiefluxhaut = model2.predict(datafluxhaut) #utilisation du model2  pour l'économie en flux haut
