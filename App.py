@@ -22,6 +22,15 @@ def reading_dataset(): #fonction lire un jeu de données en excel ou csv
     return dataset
 
 
+def reading_dataset(): #fonction lire un jeu de données en excel ou csv
+    global dataset
+    try:
+        dataset = pd.read_excel(uploaded_file)
+    except ValueError:
+        dataset = pd.read_csv(uploaded_file)
+    return dataset
+
+
 def calculconso(temps,intensiteh,cosphi):
     conso = (temps*intensiteh*1.65*400*math.sqrt(3)*cosphi)/(1000*3600)
     return conso
@@ -29,7 +38,7 @@ def calculconso(temps,intensiteh,cosphi):
 
 
 st.title('Wave concept estimation') #titre de l'application web
-st.set_option('deprecation.showPyplotGlobalUse', False)
+
 #st.sidebar.image(Image.open('logoalstefgroup.jpg'))
 uploaded_file = st.sidebar.file_uploader("Upload le fichier excel", type=["xlsx"]) #Permet d'upload la liste des équipements sous format excel 
     
@@ -66,10 +75,10 @@ if uploaded_file is not None: #si un fichier est upload
     datafluxhaut = data.assign(fluxh=high) #nouvelle table datafluxhaut, ajout de la colonne flux haut (d'après les parametres choisis)
     datafluxbas = data.assign(fluxh=low) #nouvelle table datafluxbas, ajout de la colonne flux bas (d'après les parametres choisis)
     
-    model = load_model('Model0802v2') # chargement du model1 de machine learning, détermine la consommation des convoyeurs selon leurs caractéristiques 
+    model = load_model('model0802v2') # chargement du model1 de machine learning, détermine la consommation des convoyeurs selon leurs caractéristiques 
     model2 = load_model('modelfluxecov2')# chargement du model2 de machine learning, détermine le % d'économie en fonction du flux et des caractéristique des convoyeurs
 
-    pred = model.predict(data) #utilisation du model1 pour l'économie en flux haut
+    pred = model.predict(data) #utilisation du model1 pour déterminer la consommation 
     economiefluxhaut = model2.predict(datafluxhaut) #utilisation du model2  pour l'économie en flux haut
     economiefluxbas = model2.predict(datafluxbas) #utilisation du model2 pour l'économie en flux bas
     
@@ -79,7 +88,7 @@ if uploaded_file is not None: #si un fichier est upload
     data['redlow']= economiefluxbas #data aprend une nouvelle colonne intensityH, % de réduction en flux bas
     
             
-    conso = pd.DataFrame(columns = ['id', 'consoJ', 'consoJWC','PconsoJ', 'PconsoJWC']) #nouvelle table pour les calcule de consomation et prix (avant et après waveconcept)
+    conso = pd.DataFrame(columns = ['id', 'consoJ', 'consoJWC','PconsoJ', 'PconsoJWC']) #nouvelle table pour les calcules de consomation et prix (avant et après waveconcept)
     
     conso['id']=data['id'] #Récupération des id des convoyeurs de la table data
     
@@ -89,26 +98,27 @@ if uploaded_file is not None: #si un fichier est upload
     sumPconsoJ=0 #somme du prix de la consommation par jours
     sumPconsoJWC=0 #somme du prix de la consommation par jours avec waveconcept
 
-    for i in conso.index :
-        
-        conso['consoJ'][i]= calculconso((thigh+tlow),data['intensityH'][i],cosphi)
-        consofh = calculconso(thigh,data['intensityH'][i],cosphi)*(1-data['redhigh'][i])
-        consofb = calculconso(tlow,data['intensityH'][i],cosphi)*(1-data['redlow'][i])
 
-        conso['consoJWC'][i]=consofh+consofb
-        conso['PconsoJ'][i]=conso['consoJ'][i]*prix
-        conso['PconsoJWC'][i]=conso['consoJWC'][i]*prix
+    for i in conso.index : # boucle qui permet de remplir la matrice conso 
         
-        sumconsoJ=sumconsoJ+conso['consoJ'][i]
-        sumconsoJWC=sumconsoJWC+conso['consoJWC'][i]
-        sumPconsoJ=sumPconsoJ+conso['PconsoJ'][i]
-        sumPconsoJWC=sumPconsoJWC+conso['PconsoJWC'][i]
+        conso['consoJ'][i]= calculconso((thigh+tlow),data['intensityH'][i],cosphi) # calcul de la consommation quotidienne actuelle d'un convoyeur
+        consofh = calculconso(thigh,data['intensityH'][i],cosphi)*(1-data['redhigh'][i]) #calcul de la consommation quotidienne avec le mode wave concept sur la période de flux haut d'un convoyeur
+        consofb = calculconso(tlow,data['intensityH'][i],cosphi)*(1-data['redlow'][i]) #calcul de la consommation quotidienne avec le mode wave concept sur la période de flux bas d'un convoyeur
+
+        conso['consoJWC'][i]=consofh+consofb #calcul de la consommation quotidienne avec le mode wave concept d'un convoyeur
+        conso['PconsoJ'][i]=conso['consoJ'][i]*prix #calcul du prix quotidien actuel d'un convoyeur
+        conso['PconsoJWC'][i]=conso['consoJWC'][i]*prix #calcul du prix quotidien avec le mode wave concept d'un convoyeur
+        
+        sumconsoJ=sumconsoJ+conso['consoJ'][i] #somme des cosommations quotidienne actuelles de l'ensemble des convoyeurs
+        sumconsoJWC=sumconsoJWC+conso['consoJWC'][i] #somme des cosommations quotidienne avec le wave concept de l'ensemble des convoyeurs
+        sumPconsoJ=sumPconsoJ+conso['PconsoJ'][i] #prix actuel quotidien de l'ensemble des convoyeur
+        sumPconsoJWC=sumPconsoJWC+conso['PconsoJWC'][i]  #prix avec le wave concept quotidien de l'ensemble des convoyeur
       
     
         
-    projection = pd.DataFrame(index=range(1, annee*365),columns = ['jour','consoEE', 'consoWC','PconsoEE', 'PconsoWC','Pdif'])
+    projection = pd.DataFrame(index=range(1, annee*365),columns = ['jour','consoEE', 'consoWC','PconsoEE', 'PconsoWC','Pdif']) #nouvelle matrice de projection sur une periode de temps défini par laa variable annee
     for i in projection.index:
-        projection['jour'][i]=i
+        projection['jour'][i]= datetime.date.today()+ datetime.timedelta(days=i)
         projection['consoEE'][i]=sumconsoJ*i
         projection['consoWC'][i]=sumconsoJWC*i
         projection['PconsoEE'][i]=sumPconsoJ*i
@@ -121,12 +131,14 @@ if uploaded_file is not None: #si un fichier est upload
     for i in projection.index:    
         if projection['Pdif'][i]>0:
             Jroi= i
+            Droi = projection['jour'][i]
             break
         
     if Jroi=="A":  
         st.write("Durée d'investisement nécessaire insuffisant. Durée indiqué : ",annee,"an(s)")
     else:
         st.write('Le seuil de rentabilité (point mort) sera atteint dans ', Jroi,'jours.')
+        st.write('Date estimée : ', Droi)
         st.write('Le profit dans ', annee, 'an(s) sera de ', profit ,'€.')
         
         
@@ -140,20 +152,46 @@ if uploaded_file is not None: #si un fichier est upload
         
         
     plt.figure()
-    plt.plot(projection["jour"], projection["PconsoEE"],label='Consomation EE') 
-    plt.plot(projection["jour"], projection["PconsoWC"],label='Consomation WC') 
-    plt.title('Prix consomation EE vs WC')
-    plt.xlabel('jour')
+    plt.plot(projection["jour"], projection["PconsoEE"],label='Consommation actuelle') 
+    plt.plot(projection["jour"], projection["PconsoWC"],label='Consommation wave concept') 
+    plt.title('Frais de consommation électrique actuelle vs wave concept')
+    plt.xlabel('date')
     plt.ylabel('€')
-    plt.scatter(Jroi, projection["PconsoEE"][Jroi], c = 'red') 
-    plt.axvline(Jroi, 0, projection["PconsoEE"][Jroi]/projection["PconsoEE"][annee*365-1],linestyle='--', color='r')
+    plt.scatter(Droi, projection["PconsoEE"][Jroi], c = 'red') 
+    plt.axvline(Droi, 0, projection["PconsoEE"][Jroi]/projection["PconsoEE"][annee*365-1],linestyle='--', color='r')
     plt.legend()
     st.pyplot(plt.show())
      
-    plt.figure()
-    plt.plot(projection["jour"], projection["consoEE"],label='Consomation EE') 
-    plt.plot(projection["jour"], projection["consoWC"],label='Consomation WC') 
-    plt.title('Consomation EE vs WC')
-    plt.xlabel('jour')
-    plt.ylabel('KWh')
-    plt.legend()   
+    # plt.figure()
+    # plt.plot(projection["jour"], projection["consoEE"],label='Consomation EE') 
+    # plt.plot(projection["jour"], projection["consoWC"],label='Consomation WC') 
+    # plt.title('Consomation EE vs WC')
+    # plt.xlabel('jour')
+    # plt.ylabel('KWh')
+    # plt.legend()   
+    # st.pyplot(plt.show())
+    
+    # import plotly.graph_objects as go
+    # month = projection["jour"]
+    # consoEE = projection["consoEE"]
+    # consoWC = projection["consoWC"]
+    # PconsoEE = projection["PconsoEE"]
+    # PconsoWC = projection["PconsoWC"]
+    
+    
+    # fig = go.Figure()
+    # # Create and style traces
+    
+    # fig.add_trace(go.Scatter(x=month, y=PconsoEE, name='Consommation EE',
+    #                          line = dict(color='firebrick', width=4)))
+    # fig.add_trace(go.Scatter(x=month, y=PconsoWC, name='Consommation WC',
+    #                          line=dict(color='royalblue', width=4)))
+    
+    # # Edit the layout
+    # fig.update_layout(title='conso ee vs wc',
+    #                    xaxis_title='date',
+    #                    yaxis_title='€')
+    
+
+    
+    # st.plotly_chart(fig)
