@@ -42,7 +42,7 @@ st.title('Wave concept estimation') #titre de l'application web
 primaryColor="#F63366"
 backgroundColor="#FFFFFF"
 secondaryBackgroundColor="#F0F2F6"
-textColor="#262730"
+textColor="purple"
 font="sans serif"
 
 #st.sidebar.image(Image.open('logoalstefgroup.jpg'))
