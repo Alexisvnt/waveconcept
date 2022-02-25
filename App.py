@@ -39,6 +39,11 @@ def calculconso(temps,intensiteh,cosphi):
 
 
 st.title('Wave concept estimation') #titre de l'application web
+primaryColor="#F63366"
+backgroundColor="#FFFFFF"
+secondaryBackgroundColor="#F0F2F6"
+textColor="#262730"
+font="sans serif"
 
 #st.sidebar.image(Image.open('logoalstefgroup.jpg'))
 uploaded_file = st.sidebar.file_uploader("Upload le fichier excel", type=["xlsx"]) #Permet d'upload la liste des équipements sous format excel 
