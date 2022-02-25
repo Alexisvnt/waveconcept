@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt #permet de tracer et visualiser des données sou
 import math #fonction mathématique (RACINE)
 from pycaret.regression import * 
 import streamlit as st #permet de créer une application web
-from PIL import Image
+#from PIL import Image
 
 def reading_dataset(): #fonction lire un jeu de données en excel ou csv
     global dataset
