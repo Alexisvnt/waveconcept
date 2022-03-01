@@ -12,7 +12,7 @@ import math #fonction mathématique (RACINE)
 from pycaret.regression import * 
 import streamlit as st #permet de créer une application web
 import datetime
-#from PIL import Image
+from PIL import Image
 
 def reading_dataset(): #fonction lire un jeu de données en excel ou csv
     global dataset
@@ -41,7 +41,7 @@ def calculconso(temps,intensiteh,cosphi):
 st.title('Wave concept estimation') #titre de l'application web
 
 
-#st.sidebar.image(Image.open('logoalstefgroup.jpg'))
+st.sidebar.image(Image.open('logoalstefgroup.jpg'))
 uploaded_file = st.sidebar.file_uploader("Upload le fichier excel", type=["xlsx"]) #Permet d'upload la liste des équipements sous format excel 
     
 st.sidebar.title('Parametres') #Titre parametres 
