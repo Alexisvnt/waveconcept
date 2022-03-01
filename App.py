@@ -37,7 +37,7 @@ def calculconso(temps,intensiteh,cosphi):
     return conso
 
 
-
+st.set_page_config(page_icon="📈", page_title="Wave concept estimation")
 st.title('Wave concept estimation') #titre de l'application web
 st.set_option('deprecation.showPyplotGlobalUse', False)
 
