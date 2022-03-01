@@ -4,5 +4,5 @@ matplotlib-inline==0.1.2
 pycaret==2.3.2
 streamlit==0.89.0
 openpyxl==3.0.7
-Image==8.4.0
+Image==1.5.33
 
