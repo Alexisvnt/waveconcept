@@ -13,6 +13,7 @@ from pycaret.regression import *
 import streamlit as st #permet de créer une application web
 import datetime
 from PIL import Image
+import random
 
 def reading_dataset(): #fonction lire un jeu de données en excel ou csv
     global dataset
@@ -124,7 +125,7 @@ if uploaded_file is not None: #si un fichier est upload
         projection['jour'][i]= datetime.date.today()+ datetime.timedelta(days=i)
         projection['consoEE'][i]=sumconsoJ*i
         projection['consoWC'][i]=sumconsoJWC*i
-        projection['PconsoEE'][i]=sumPconsoJ*i
+        projection['PconsoEE'][i]=sumPconsoJ*i*(1+random())
         projection['PconsoWC'][i]=sumPconsoJWC*i+invest
         projection['Pdif'][i]=projection['PconsoEE'][i]-projection['PconsoWC'][i]
     
